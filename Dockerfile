@@ -16,6 +16,7 @@ ENV MYSQL_DBNAME=todo-list
 COPY package*.json ./
 
 RUN npm install
+RUN npx sequelize init
 RUN npx sequelize db:migrate
 
 # Bundle app source
