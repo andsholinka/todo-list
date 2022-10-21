@@ -1,40 +1,21 @@
-'use strict';
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    const Activities = sequelize.define("Activities", {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true
+    class activities extends Model {
+        // static associate(models) {
+        //   // define association here
+        // }
+    }
+    activities.init(
+        {
+        email: DataTypes.STRING,
+        title: DataTypes.STRING,
         },
-        email: {
-            type: DataTypes.STRING(50),
-        },
-        title: {
-            type: DataTypes.STRING(100),
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            // defaultValue: sequelize.literal('NOW()')
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            // defaultValue: sequelize.literal('NOW()')
-        },
-        deletedAt: DataTypes.DATE
-    }, {
+        {
         sequelize,
+        modelName: "activities",
         paranoid: true,
-        tableName: 'Activities',
-        timestamps: true
-    });
-
-    Activities.associate = function (models) {
-        Activities.hasMany(models.Todos, {
-            foreignKey: 'activity_group_id'
-        })
-    };
-    return Activities;
+        }
+    );
+    return activities;
 };

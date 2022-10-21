@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
 # Create app directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # ENV
 ENV MYSQL_HOST=127.0.0.1

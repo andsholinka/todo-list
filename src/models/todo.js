@@ -1,48 +1,24 @@
-'use strict';
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    const Todos = sequelize.define("Todos", {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true
+    class todos extends Model {
+        // static associate(models) {
+        //   // define association here
+        // }
+    }
+    todos.init(
+        {
+        activity_group_id: DataTypes.NUMBER,
+        title: DataTypes.STRING,
+        is_active: DataTypes.STRING,
+        priority: DataTypes.STRING,
         },
-        activity_group_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        title: {
-            type: DataTypes.STRING(100),
-        },
-        is_active: {
-            type: DataTypes.INTEGER,
-        },
-        priority: {
-            type: DataTypes.STRING(50),
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            // defaultValue: sequelize.literal('NOW()')
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            // defaultValue: sequelize.literal('NOW()')
-        },
-        deletedAt: DataTypes.DATE,
-        deletedAt: DataTypes.DATE
-    }, {
+        {
         sequelize,
+        modelName: "todos",
+        underscored: true,
         paranoid: true,
-        tableName: 'Todos',
-        timestamps: true
-    });
-    Todos.associate = function (models) {
-        Todos.belongsTo(models.Activities, {
-            as: 'activities',
-            foreignKey: 'activity_group_id'
-        })
-    };
-    return Todos;
+        }
+    );
+    return todos;
 };

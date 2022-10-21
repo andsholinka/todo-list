@@ -1,4 +1,4 @@
-const db = require('../models/index');
+const { activities } = require("../models");
 
 require('dotenv').config();
 
@@ -6,15 +6,13 @@ const {
     sequelize
 } = require('../models/index');
 
-const Activities = db.Activities;
-
 const createActivity = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
             if (!req.body.title) throw new Error('gagal menambahkan activity, title wajib diisi');
 
-            const data = await Activities.create({
+            const data = await activities.create({
                 email: req.body.email,
                 title: req.body.title,
                 createdAt: Date.now(),
@@ -42,7 +40,7 @@ const getAllActivites = async (req, res) => {
         await sequelize.transaction(async (t) => {
 
             const data = []
-            const actvities = await Activities.findAll({
+            const actvities = await activities.findAll({
                 // paranoid:false
             })
 
@@ -77,7 +75,7 @@ const getDetailActivity = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const data = await Activities.findOne({
+            const data = await activities.findOne({
                 where: {
                     id: req.params.id
                 }
@@ -112,7 +110,7 @@ const updateActivity = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const activity = await Activities.findOne({
+            const activity = await activities.findOne({
                 where: {
                     id: req.params.id
                 },
@@ -155,7 +153,7 @@ const deleteActivity = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const activity = await Activities.findOne({
+            const activity = await activities.findOne({
                 where: {
                     id: req.params.id
                 },
@@ -171,7 +169,7 @@ const deleteActivity = async (req, res) => {
                 return
             }
 
-            await Activities.destroy({
+            await activities.destroy({
                 where: {
                     id: req.params.id,
                 },

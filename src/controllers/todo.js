@@ -1,12 +1,10 @@
-const db = require('../models/index');
+const { todos } = require("../models");
 
 require('dotenv').config();
 
 const {
     sequelize
 } = require('../models/index');
-
-const Todos = db.Todos;
 
 const createTodoItems = async (req, res) => {
     try {
@@ -15,7 +13,7 @@ const createTodoItems = async (req, res) => {
             if (!req.body.title) throw new Error('gagal menambahkan todo-item, title wajib diisi');
             if (!req.body.activity_group_id) throw new Error('gagal menambahkan todo-item, activity group id wajib diisi');
 
-            const data = await Todos.create({
+            const data = await todos.create({
                 title: req.body.title,
                 activity_group_id: req.body.activity_group_id,
                 is_active: req.body.is_active,
@@ -47,7 +45,7 @@ const getAllTodoItems = async (req, res) => {
             const data = []
 
             if (req.query.activity_group_id) {
-                const todoItems = await Todos.findAll({
+                const todoItems = await todos.findAll({
                     // paranoid:false
                     where: {
                         activity_group_id: req.query.activity_group_id
@@ -67,7 +65,7 @@ const getAllTodoItems = async (req, res) => {
                     })
                 }
             } else {
-                const todoItems = await Todos.findAll()
+                const todoItems = await todos.findAll()
     
                 for (var item of todoItems) {
                     data.push({
@@ -103,7 +101,7 @@ const getDetailTodoItems = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const data = await Todos.findOne({
+            const data = await todos.findOne({
                 where: {
                     id: req.params.id
                 }
@@ -138,7 +136,7 @@ const updateTodoItems = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const data = await Todos.findOne({
+            const data = await todos.findOne({
                 where: {
                     id: req.params.id
                 },
@@ -181,7 +179,7 @@ const deleteTodoItems = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            const data = await Todos.findOne({
+            const data = await todos.findOne({
                 where: {
                     id: req.params.id
                 },
@@ -197,7 +195,7 @@ const deleteTodoItems = async (req, res) => {
                 return
             }
 
-            await Todos.destroy({
+            await todos.destroy({
                 where: {
                     id: req.params.id,
                 },
