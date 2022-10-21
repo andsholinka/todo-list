@@ -4,7 +4,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # ENV
-ENV MYSQL_HOST=host.docker.internal
+ENV MYSQL_HOST=127.0.0.1
 ENV MYSQL_PORT=3306
 ENV MYSQL_USER=root
 ENV MYSQL_PASSWORD=
@@ -16,12 +16,10 @@ ENV MYSQL_DBNAME=todo-list
 COPY package*.json ./
 
 RUN npm install
-RUN npx sequelize init
-RUN npx sequelize db:migrate
 
 # Bundle app source
 COPY . .
 
 EXPOSE 3030
 
-CMD [ "node", "index.js" ]
+CMD [ "npm", "start" ]
