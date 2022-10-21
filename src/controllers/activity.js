@@ -10,7 +10,14 @@ const createActivity = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            if (!req.body.title) throw new Error('gagal menambahkan activity, title wajib diisi');
+            if (!req.body.title) {
+                res.status(400).send({
+                    status: 'Bad Request',
+                    message: 'title cannot be null',
+                    data: {}
+                })
+                return
+            }
 
             const data = await activities.create({
                 email: req.body.email,
@@ -27,7 +34,7 @@ const createActivity = async (req, res) => {
         });
     } catch (e) {
         console.log(e);
-        res.status(400).send({
+        res.status(500).send({
             status: res.statusCode,
             message: e.message
         });
@@ -183,7 +190,7 @@ const deleteActivity = async (req, res) => {
         });
     } catch (e) {
         console.log(e);
-        res.status(400).send({
+        res.status(500).send({
             status: res.statusCode,
             message: e.message
         })

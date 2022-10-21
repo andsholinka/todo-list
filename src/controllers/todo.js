@@ -10,14 +10,29 @@ const createTodoItems = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            if (!req.body.title) throw new Error('gagal menambahkan todo-item, title wajib diisi');
-            if (!req.body.activity_group_id) throw new Error('gagal menambahkan todo-item, activity group id wajib diisi');
+            if (!req.body.title) {
+                res.status(400).send({
+                    status: 'Bad Request',
+                    message: 'title cannot be null',
+                    data: {}
+                })
+                return
+            }
+
+            if (!req.body.activity_group_id) {
+                res.status(400).send({
+                    status: 'Bad Request',
+                    message: 'activity_group_id cannot be null',
+                    data: {}
+                })
+                return
+            }
 
             const data = await todos.create({
                 title: req.body.title,
                 activity_group_id: req.body.activity_group_id,
-                is_active: req.body.is_active,
-                priority: req.body.priority,
+                is_active: true,
+                priority: "very-high",
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
             })
@@ -30,7 +45,7 @@ const createTodoItems = async (req, res) => {
         });
     } catch (e) {
         console.log(e);
-        res.status(400).send({
+        res.status(500).send({
             status: res.statusCode,
             message: e.message
         });
@@ -110,7 +125,7 @@ const getDetailTodoItems = async (req, res) => {
             if (data == null) {
                 res.status(404).send({
                     status: 'Not Found',
-                    message: `Todo-item with ID ${req.params.id} Not Found`,
+                    message: `Todo with ID ${req.params.id} Not Found`,
                     data: {}
                 })
                 return
@@ -146,7 +161,7 @@ const updateTodoItems = async (req, res) => {
             if (data == null) {
                 res.status(404).send({
                     status: 'Not Found',
-                    message: `Todo-item with ID ${req.params.id} Not Found`,
+                    message: `Todo with ID ${req.params.id} Not Found`,
                     data
                 })
                 return
@@ -154,6 +169,7 @@ const updateTodoItems = async (req, res) => {
 
             await data.update({
                 is_active: req.body.is_active,
+                priority: req.body.priority,
                 title: req.body.title,
                 updatedAt: Date.now(),
             }, {
@@ -189,7 +205,7 @@ const deleteTodoItems = async (req, res) => {
             if (data == null) {
                 res.status(404).send({
                     status: 'Not Found',
-                    message: `Todo-item with ID ${req.params.id} Not Found`,
+                    message: `Todo with ID ${req.params.id} Not Found`,
                     data
                 })
                 return
