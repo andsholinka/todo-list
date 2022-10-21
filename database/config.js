@@ -13,10 +13,4 @@ module.exports = {
     updatedAt: "updated_at",
     deletedAt: "deleted_at",
   },
-  pool: {
-    max: 10,
-    min: 1,
-    idle: 10000,
-    acquire: 60000
-  }
 };
