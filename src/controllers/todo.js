@@ -2,40 +2,47 @@ const { todos } = require("../models");
 
 require('dotenv').config();
 
+const {
+    sequelize
+} = require('../models/index');
+
 const createTodoItems = async (req, res) => {
     try {
-        if (!req.body.title) {
-            res.status(400).send({
-                status: 'Bad Request',
-                message: 'title cannot be null',
-                data: {}
+        await sequelize.transaction(async (t) => {
+
+            if (!req.body.title) {
+                res.status(400).send({
+                    status: 'Bad Request',
+                    message: 'title cannot be null',
+                    data: {}
+                })
+                return
+            }
+
+            if (!req.body.activity_group_id) {
+                res.status(400).send({
+                    status: 'Bad Request',
+                    message: 'activity_group_id cannot be null',
+                    data: {}
+                })
+                return
+            }
+
+            const data = await todos.create({
+                title: req.body.title,
+                activity_group_id: req.body.activity_group_id,
+                is_active: true,
+                priority: "very-high",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
             })
-            return
-        }
 
-        if (!req.body.activity_group_id) {
-            res.status(400).send({
-                status: 'Bad Request',
-                message: 'activity_group_id cannot be null',
-                data: {}
+            res.status(201).send({
+                status: "Success",
+                message: "Success",
+                data
             })
-            return
-        }
-
-        const data = await todos.create({
-            title: req.body.title,
-            activity_group_id: req.body.activity_group_id,
-            is_active: true,
-            priority: "very-high",
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        })
-
-        res.status(201).send({
-            status: "Success",
-            message: "Success",
-            data
-        })
+        });
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -136,36 +143,39 @@ const getDetailTodoItems = async (req, res) => {
 const updateTodoItems = async (req, res) => {
 
     try {
-        const data = await todos.findOne({
-            where: {
-                id: req.params.id
-            },
-            transaction: t
-        })
+        await sequelize.transaction(async (t) => {
 
-        if (data == null) {
-            res.status(404).send({
-                status: 'Not Found',
-                message: `Todo with ID ${req.params.id} Not Found`,
+            const data = await todos.findOne({
+                where: {
+                    id: req.params.id
+                },
+                transaction: t
+            })
+
+            if (data == null) {
+                res.status(404).send({
+                    status: 'Not Found',
+                    message: `Todo with ID ${req.params.id} Not Found`,
+                    data
+                })
+                return
+            }
+
+            await data.update({
+                is_active: req.body.is_active,
+                priority: req.body.priority,
+                title: req.body.title,
+                updatedAt: Date.now(),
+            }, {
+                transaction: t
+            });
+
+            res.status(200).send({
+                status: 'Success',
+                message: 'Success',
                 data
             })
-            return
-        }
-
-        await data.update({
-            is_active: req.body.is_active,
-            priority: req.body.priority,
-            title: req.body.title,
-            updatedAt: Date.now(),
-        }, {
-            transaction: t
         });
-
-        res.status(200).send({
-            status: 'Success',
-            message: 'Success',
-            data
-        })
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -177,32 +187,35 @@ const updateTodoItems = async (req, res) => {
 
 const deleteTodoItems = async (req, res) => {
     try {
-        const data = await todos.findOne({
-            where: {
-                id: req.params.id
-            },
-            transaction: t
-        })
+        await sequelize.transaction(async (t) => {
 
-        if (data == null) {
-            res.status(404).send({
-                status: 'Not Found',
-                message: `Todo with ID ${req.params.id} Not Found`,
-                data
+            const data = await todos.findOne({
+                where: {
+                    id: req.params.id
+                },
+                transaction: t
             })
-            return
-        }
 
-        await todos.destroy({
-            where: {
-                id: req.params.id,
-            },
-            transaction: t
-        })
-        res.status(200).json({
-            status: 'Success',
-            message: 'Success',
-            data: {}
+            if (data == null) {
+                res.status(404).send({
+                    status: 'Not Found',
+                    message: `Todo with ID ${req.params.id} Not Found`,
+                    data
+                })
+                return
+            }
+
+            await todos.destroy({
+                where: {
+                    id: req.params.id,
+                },
+                transaction: t
+            })
+            res.status(200).json({
+                status: 'Success',
+                message: 'Success',
+                data: {}
+            });
         });
     } catch (e) {
         console.log(e);
