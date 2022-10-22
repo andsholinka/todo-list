@@ -1,9 +1,10 @@
 const express = require('express');
 const activityController = require('../controllers/activity');
+const { runValidation, createActivity } = require('../validation');
 
 const router = express.Router();
 
-router.post('/', activityController.createActivity);
+router.post('/', createActivity, runValidation, activityController.createActivity);
 
 router.get('/', activityController.getAllActivites);
 

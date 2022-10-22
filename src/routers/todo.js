@@ -1,9 +1,10 @@
 const express = require('express');
 const todoController = require('../controllers/todo');
+const { runValidation, createTodo } = require('../validation');
 
 const router = express.Router();
 
-router.post('/', todoController.createTodoItems);
+router.post('/', createTodo, runValidation, todoController.createTodoItems);
 
 router.get('/', todoController.getAllTodoItems);
 
