@@ -1,7 +1,5 @@
 const { activities } = require("../models");
 
-require('dotenv').config();
-
 const createActivity = async (req, res) => {
     try {
         const data = await activities.create({
@@ -28,27 +26,15 @@ const createActivity = async (req, res) => {
 const getAllActivites = async (req, res) => {
 
     try {
-        const data = []
-        const actvities = await activities.findAll({
-            // paranoid:false
-        })
-
-        for (var item of actvities) {
-            data.push({
-                id: item.id,
-                email: item.email,
-                title: item.title,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                deletedAt: item.deletedAt,
-            })
-        }
-
-        res.status(200).send({
-            status: 'Success',
-            message: 'Success',
-            data
-        })
+        const limit = req.query.limit ? req.query.limit : 5;
+        const findAll = await activities.findAll({
+            limit: limit,
+        });
+        return res.status(200).json({
+            status: "Success",
+            message: "Success",
+            data: findAll,
+        });
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -169,5 +155,5 @@ module.exports = {
     getAllActivites,
     getDetailActivity,
     updateActivity,
-    deleteActivity,
+    deleteActivity
 }

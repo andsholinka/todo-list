@@ -1,7 +1,5 @@
 const { todos } = require("../models");
 
-require('dotenv').config();
-
 const createTodoItems = async (req, res) => {
     try {
         const data = await todos.create({
@@ -30,50 +28,20 @@ const createTodoItems = async (req, res) => {
 const getAllTodoItems = async (req, res) => {
 
     try {
-        const data = []
-
-        if (req.query.activity_group_id) {
-            const todoItems = await todos.findAll({
-                // paranoid:false
-                where: {
-                    activity_group_id: req.query.activity_group_id
-                }
-            })
-
-            for (var item of todoItems) {
-                data.push({
-                    id: item.id,
-                    activity_group_id: item.activity_group_id,
-                    title: item.title,
-                    is_active: item.is_active,
-                    priority: item.priority,
-                    createdAt: item.createdAt,
-                    updatedAt: item.updatedAt,
-                    deletedAt: item.deletedAt,
-                })
-            }
-        } else {
-            const todoItems = await todos.findAll()
-
-            for (var item of todoItems) {
-                data.push({
-                    id: item.id,
-                    activity_group_id: item.activity_group_id,
-                    title: item.title,
-                    is_active: item.is_active,
-                    priority: item.priority,
-                    createdAt: item.createdAt,
-                    updatedAt: item.updatedAt,
-                    deletedAt: item.deletedAt,
-                })
-            }
-        }
-
-        res.status(200).send({
-            status: 'Success',
-            message: 'Success',
-            data
-        })
+        const limit = req.query.limit ? req.query.limit : 5;
+        const { activity_group_id } = req.query;
+        const whereData = activity_group_id
+            ? { activity_group_id: activity_group_id }
+            : null;
+        const findAll = await todos.findAll({
+            where: whereData,
+            limit: limit,
+        });
+        return res.status(200).json({
+            status: "Success",
+            message: "Success",
+            data: findAll,
+        });
     } catch (e) {
         console.log(e);
         res.status(500).send({
