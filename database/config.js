@@ -7,6 +7,12 @@ module.exports = {
   host: process.env.MYSQL_HOST,
   dialect: "mysql",
   logging: false,
+  pool: {
+    max: 100,
+    min: 10,
+    acquire: 30000,
+    idle: 10000
+  },
   define: {
     underscored: true,
     createdAt: "created_at",
