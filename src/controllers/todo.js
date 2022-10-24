@@ -28,7 +28,7 @@ const createTodoItems = async (req, res) => {
 const getAllTodoItems = async (req, res) => {
 
     try {
-        const limit = req.query.limit ? req.query.limit : 5;
+        const limit = req.query.limit ? req.query.limit : 1;
         const { activity_group_id } = req.query;
         const whereData = activity_group_id
             ? { activity_group_id: activity_group_id }

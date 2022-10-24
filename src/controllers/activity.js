@@ -26,7 +26,7 @@ const createActivity = async (req, res) => {
 const getAllActivites = async (req, res) => {
 
     try {
-        const limit = req.query.limit ? req.query.limit : 5;
+        const limit = req.query.limit ? req.query.limit : 1;
         const findAll = await activities.findAll({
             limit: limit,
         });
