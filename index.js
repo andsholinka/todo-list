@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const logger = require('morgan');
+const winston = require('winston');
 const path = require('path');
+var convert = require('xml-js');
 
 require('dotenv').config();
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 8080;
 
 const apiRouter = require('./src/routers');
 
@@ -13,9 +15,11 @@ const router = express.Router();
 
 app.use(cors())
 app.use(logger('dev'));
+
 app.use(express.json({
     limit: '50mb'
 }));
+
 app.use(express.urlencoded({
     extended: true,
     parameterLimit: 100000,
@@ -32,6 +36,17 @@ app.get("/", (req, res) => {
     });
 });
 
+app.get("/close", (req, res) => {
+    res.send({
+        message: "Exiting NodeJS server"
+    });
+    process.exit()
+});
+
+app.get('/_health', (req, res) => {
+    res.status(200).send('ok')
+})
+
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
 });
@@ -39,3 +54,7 @@ app.listen(PORT, () => {
 router.use('/', apiRouter)
 
 app.use('/', router);
+
+app.use((req, res) => {
+    res.status(404).send('404 Page Not Found')
+});
